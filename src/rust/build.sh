@@ -5,8 +5,6 @@
 
 set -e
 set -x
-
-# nice "hack" which make the script work, even if not executed from "./"
 DIR=$(dirname "$(realpath "$0")")
 cd "$DIR" || exit
 
