@@ -11,29 +11,6 @@ and `UEFI` as firmware environment.
 framebuffer. The kernel fetches some information about its environment and print it to the screen. If you boot it 
 on your private computer, it would look similar as shown on the right.*
 
-## UPDATE Jan 2022
-I updated this because in the meantime I gained more knowledge and experience. There were a few bad code decisions
-that I wanted to remove or improve.
-
-TL;DR:
-- ✅ Multiboot2 binary written in Rust; bootable by GRUB
-- ✅ Logging to: Serial, QEMU Debugcon, and Framebuffer from UEFI Graphics Output Protocol (GOP)
-- ✅ Kernelheap: very basic; without paging or actually knowing how much physical memory is available
-- ✅ exit UEFI boot services
-- ❌ paging, page tables
-- ❌ multi cores (bootstrapping Application Processors (APs)). So far only Bootstrap Processor (BSP) in 64-bit long mode.
-- ❌ no typical kernel features, such as threads, keyboard input, etc.
-- ❌ ELF/kernel is not relocatable --> required to work on all UEFI platforms without problems
-
-## Original README:
-
-Although this project could be developed to a fully functional (micro)kernel, this is out of scope of this prototype. 
-It is limited to fetch data from `UEFI` firmware, init a framebuffer, read data from  `cpuid`, and logging this 
-information to the screen. The main goals were to figure out how such a setup could look like and how we could keep 
-developer experience and productivity high. For example, to achieve the latter, this repository contains an easy 
-mechanism to start it in `QEMU`. This project uses `GRUB` + `multiboot2` instead of a custom `UEFI`-loader-app, 
-because at the company where I developed this prototype, we have a component, that must be loadable by `GRUB`. 
-Therefore it was important to collect experience, how this can be done in Rust.
 
 ## Build Process of the Kernel
 
