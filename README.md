@@ -6,11 +6,6 @@ to do with "multiple OS boot environments"! The binary gets packaged as an `ELF6
 by `GRUB` [[0]], a`multiboot2`-compliant bootloader. The demo project focuses on the **x86_64** processor architecture 
 and `UEFI` as firmware environment.
 
-![Rust Kernel QEMU Screenshot](./doc/figures/rust-kernel-qemu-screenshot.png "Screenshot of Rust Kernel running inside QEMU")
-*Screenshot of our kernel running in QEMU. On the left you see the serial output, on the right the output to the
-framebuffer. The kernel fetches some information about its environment and print it to the screen. If you boot it 
-on your private computer, it would look similar as shown on the right.*
-
 
 ## Build Process of the Kernel
 
@@ -63,66 +58,6 @@ With a boot-order of `firmware > GRUB > %my-binary%`, the binary could take the 
 ---
 
 
-#### Processor Mode
-
-The initial processor mode of the boot processor gets influenced at first by the platform and the underlying firmware. 
-If your platform (mainboard/chipset) used legacy `BIOS`, the handoff from the firmware to the bootloader will happen in
-`16-bit real mode`. If you use `UEFI` with `CSM` (compatibility support module) enabled, it will happen in 
-`32-bit protected mode` [Intel® Platform Innovation for UEFI - CSM Specification: [[5]]]. If you have a modern
-`UEFI`, the handoff takes place in either `32-bit protected mode` for `x86` processors or `64-bit long mode` for 
-`x86_64` CPUs [Section 2.3.2/2.3.4 [[4]]].
-
-`GRUB` is an `EFI`-application and runs as `64-bit code` in our case. Because our prototype kernel only focuses on `x86_64` with 
-`UEFI` and our `multiboot2` header instructs the bootloader to give us the `AMD64` state (alias for `x86_64`) 
-[Section 3.5: [[1]]], `GRUB` is not required to do any action in this specific regard, because the boot processor is 
-all the time in the correct mode. 
-
-Furthermore, as specified in [Section 3.5 [[1]]/Section 2.3.4: [[4]]] interrupts are enabled as well as a few
-other settings being made.
-
-*Side note: Theoretically `multiboot2` would give us a big benefit in this regard in legacy-boot environments
-(or `UEFI` with `CSM`), because it could give us the `64-bit long mode`-state, which wouldn't be initially there.
-We wouldn't have to make all the transitions by ourselves.*
-
-
-If we want to boot other cores eventually, we find background infos in  
-[**Combined Volume Set of Intel® 64 and IA-32 Architectures Software Developer’s Manuals**/8.4 Multiple-Processor (MP) 
-Initialization [[6]]]. This prototype doesn't implement this so far, but because it's interesting and not widely known,
-I'd like to give a few details. The other cores are called *application processors* (APs) in Intel manuals and
-after a power-up or reset, the APs also complete a minimal self-configuration, and then wait for a startup signal 
-(a *SIPI message*)[[6]] from the BP. Each AP can be addressed by
-its unique *APIC ID* [[6]]. APIC stands for *Advanced Programmable Interrupt Controller*, which is `x86_64`'s mechanism 
-to deliver interrupts.
-
-This means each AP waits basically for an interrupt from the BP. If the kernel follows the procedure described
-in the manual [[6]], each core will receive an address with code to execute. This code
-will usually bring the core into `64-bit long mode`. Further work is kernel specific.
-
-
-
-
-
-#### Stack
-
-`UEFI` gives a payload a `128KiB` of stack according to the spec [[4]], but this is used by `GRUB`
-Therefore, we define our own stack in `start.S`, before the dispatch to the Rust binary happens. This way, we 
-have enough stack for our needs, and the additional memory usage is negligible.
-
-#### Memory
-
-At the beginning all memory gets managed by the `UEFI` allocator, which is part of the boot services of `UEFI`.
-I don't know the implementation details of `GRUB` but I'm confident they use reuse this allocator for their needs.
-Our kernel also benefits from this allocator. Anyhow, we can't use it all the time. Eventually our kernel needs 
-to exit the `UEFI` boot services and take full control over the system, including memory management. Because this 
-is not implemented yet, this section may change in the future.
-
-#### Summary Environment
-
-The following figure summarizes the important boot flow and the environment to cope with.
-
-![Boot Environment Overview](./doc/figures/rust-kernel-boot-environment.png "Boot Environment Overview")
-
----
 
 ## Trivia/FAQ/Good to know/What I've learnt
 - Q: Are OPCODES between 32-bit and 64-bit code different?
