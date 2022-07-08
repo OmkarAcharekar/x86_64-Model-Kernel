@@ -1,7 +1,7 @@
-# Build Setup Model to Compile a Multiboot Kernel in Rust for `x86_64`
+# Build Setup Model to Compile a Kernel for `x86_64`
 
-A `multiboot`-compatible [[1]] binary (kernel) whic refers to a specification [[1]] that defines the handoff from a bootloader to a payload. It has nothing to do with "multiple OS boot environments"! The binary gets packaged as an `ELF64-x86_64`-file [[2]], that can be loaded 
-by `GRUB` [[0]], a`multiboot2`-compliant bootloader. The demo project focuses on the **x86_64** processor architecture 
+A compatible [[1]] binary (kernel) which refers to a specification [[1]] that defines the handoff from a bootloader to a payload. It has nothing to do with "multiple OS boot environments"! The binary gets packaged as an `ELF64-x86_64`-file [[2]], that can be loaded 
+by `GRUB` [[0]], a`multiboot`-compliant bootloader. The demo project focuses on the **x86_64** processor architecture 
 and `UEFI` as firmware environment.
 
 
