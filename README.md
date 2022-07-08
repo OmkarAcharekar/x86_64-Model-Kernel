@@ -62,35 +62,6 @@ With a boot-order of `firmware > GRUB > %my-binary%`, the binary could take the 
 
 ---
 
-### System Environment & Processor Mode After Handoff
-
-This section clarifies how the Rust kernel sees the environment after the binary was loaded, 
-i.e., after `multiboot2` handoff. When `GRUB` is done loading our `ELF64-x86_64`-file, and our
-application starts executing, a CPU core can subsequently execute the code. At this point we only have one single 
-core (the *boot processor* (BP) available, that is running in `64-bit long mode`. We need further setup to boot 
-up and use other cores eventually. 
-
-*Side note: In Intel's manuals the "BP" is also called "bootstrap processor" (BSP).*
-
-The `multiboot2`-header inside the `ELF` of the kernel instructs the bootloader `GRUB` via a specific header tag 
-to give us the `AMD64`-machine state after handoff with `UEFI` boot services enabled. `AMD64` is a synonym for `x86_64` and the 
-`AMD64` state is specified inside the `multiboot2` spec [[1]]. Further details get explained in the following
-sections. Right before handoff, `GRUB` stores the pointer to the **multiboot information structure** (*mbi*) in 
-register `ebx` and a magic `multiboot2` number in `eax`. 
-
-
-#### UEFI vs BIOS
-
-For `multiboot2`-compliant binaries it's irrelevant whether the firmware
-is a legacy `BIOS` or an `UEFI`-implementation. What's relevant is that the binary 
-gets a `multiboot2` structure passed as payload, that contains multiple "tags".
-A tag can for example contain the `UEFI system table` [[1]]. 
-
-Therefore, a "100% bullet proof" kernel should cope with two kinds of firmware (legacy BIOS and UEFI). In this
-example, for the sake of simplicity and because want to avoid legacy, I only focus on `UEFI`. When our binary starts, the 
-`UEFI boot time services` are still available. Consult the `UEFI`-spec for further information. This means, that it is 
-up to our binary to exit the boot services eventually.
-
 
 #### Processor Mode
 
@@ -153,31 +124,6 @@ The following figure summarizes the important boot flow and the environment to c
 
 ---
 
-### Running & Debugging in Qemu
-#### Running
-`QEMU` itself has a `-kernel`-option to boot a `multiboot`-kernel. Unfortunately, this doesn't support `multiboot2` 
-but we have a `multiboot2` binary/kernel here. Therefore, I took the approach of loading `edk2/OVMF` (`UEFI`) into 
-`QEMU`, which itself loads the `GRUB`-binary. `GRUB` will finally load the `multiboot2` binary. The entry point will
-be called, which is specified by the assembly code in `start.S`.
-
-#### Getting Output (in QEMU) & Debug
-Getting output in a very early stage of the boot is hard. Especially, if you have a lack of experience, as I did when
-I started creating this project. Fortunately, there are a few easy ways, how you can get output from QEMU but also 
-from a real x86_64 computer. Please look into the code to check out the serial logger, the QEMU debugcon logger, and
-the UEFI GOP Framebuffer logger. The first two logger are really simple. In the end, they just output ASCII via an 
-x86 I/O port and QEMU can fetch it. Some computers also have serial outputs, which you can use to get the output from
-the serial line. The UEFI framebuffer output is of course the coolest one, but it needs quite a lot of setup, until
-it works (if you don't know yet how the could should look like // you are not experienced with this).
-
-Another way is also the following:
-You can write a value into a register and `hlt` (stop the processor). In the QEMU GUI, you can open 
-`View > compatmonitor0` and type `info registers`- you should see the register values!
-Use this code for example:
-
-```rust
-unsafe { asm!("mov edi, {val}", "cli", "hlt", val = const 0x0bad_f00d_u32) };
-```
-
 ## Trivia/FAQ/Good to know/What I've learnt
 - Q: Are OPCODES between 32-bit and 64-bit code different?
     - A: yes, I ran into this and learned it the hard way. If you execute 64-bit code in a 32-bit environment
@@ -186,15 +132,6 @@ unsafe { asm!("mov edi, {val}", "cli", "hlt", val = const 0x0bad_f00d_u32) };
 - Q: Why is the Rust binary a static library and not an executable?
     - A: The final binary gets assembled from multiple object files. Code must be relocatable by the linker,
          otherwise (relative) jumps and loads may get damaged.
-
-## Open Questions / TODO
-- [ ] How to ensure in Linker Script, that no code is mapped to address
-      where UEFI stuff is stored?
-  - [ ] make file relocatable \
-    currently hard to implement, because GRUB doesn't support relocatable ELF 
-    files. We didn't put much effort into this yet.
-- [ ] Debug and Prod build
-
 
 ## References
 - **GRUB bootloader** \
