@@ -1,4 +1,4 @@
-# Build Setup Prototype to Compile a Multiboot2 Binary in Rust for `x86_64`
+# Build Setup Model to Compile a Multiboot2 Binary in Rust for `x86_64`
 
 This project builds a minimal `multiboot2`-compatible [[1]] binary (kernel) where the main logic is written in Rust. 
 **"multiboot2"** refers to a specification [[1]] that defines the handoff from a bootloader to a payload. It has nothing
