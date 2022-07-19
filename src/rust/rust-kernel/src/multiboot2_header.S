@@ -1,9 +1,7 @@
 # The ability of Rust to include global assembly is poorly documented.
 # It uses GAS (GNU Assembly) syntax
 
-# is already the default
-# . intel_syntax noprefix
-
+.intel_syntax noprefix
 .code64
 # entry point into start routine (start.S)
 .EXTERN start

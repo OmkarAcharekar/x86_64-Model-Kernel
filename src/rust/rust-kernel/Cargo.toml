@@ -1,0 +1,30 @@
+[package]
+name = "rust-multiboot2-64-bit-kernel"
+description = """
+Defines the 64-bit entry point for the boot processor (core).
+All (used) symbols will be transferred into the final ELF.
+"""
+version = "0.1.0"
+authors = ["Philipp Schuster <philipp.schuster@cyberus-technology.de>"]
+edition = "2018"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+x86 = "0.40.0"
+# raw-cpuid = { path = "../../../../rust-cpuid" }
+# raw-cpuid = "9.1.1" # as long as x86 crate references old version
+uefi = { version = "0.11.0", features = ["logger"] }
+# uefi = { features = ["logger"], path = "../../../../uefi-rs" }
+log = "0.4.14"
+x86_64 = "0.14.3"
+multiboot2 = "0.12.1"
+# multiboot2 = { path = "../../../../multiboot2-elf64" }
+utils = { path = "../rust-utils" }
+# useage as arrays but on stack; required to use core::fmt conveniently
+arrayvec = { version = "0.7.1", default-features = false }
+# derive Display, which will make printing of enum variants convenient
+derive_more = { version = "0.99.14", default-features = false, features = ["display"] }
+runs_inside_qemu = "1.0.3"
+# runs_inside_qemu = { path = "../../../../runs-inside-qemu" }

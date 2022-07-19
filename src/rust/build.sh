@@ -5,6 +5,8 @@
 
 set -e
 set -x
+
+# nice "hack" which make the script work, even if not executed from "./"
 DIR=$(dirname "$(realpath "$0")")
 cd "$DIR" || exit
 
@@ -12,7 +14,7 @@ cd "$DIR" || exit
 # We develop them as we would use them on the host platform. This makes test
 # execution easier (as long as https://github.com/rust-lang/cargo/issues/9710 exists).
 LIBS=(
-    "kernel-lib"
+    "rust-utils"
 )
 
 for LIB in "${LIBS[@]}"
@@ -22,7 +24,6 @@ do
      cd "$LIB" || exit
      cargo build
      cargo test
-     cargo fmt -- --check
    )
 done
 
@@ -30,7 +31,7 @@ done
 
 
 BINS=(
-    "kernel-bin"
+    "rust-kernel"
 )
 
 for BIN in "${BINS[@]}"
@@ -39,7 +40,6 @@ do
    (
      cd "$BIN" || exit
      cargo build
-     cargo fmt -- --check
      # tests don't work so far
      # cargo test --target x86_64-unknown-linux-gnu
    )

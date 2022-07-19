@@ -1,12 +1,10 @@
 # The ability of Rust to include global assembly is poorly documented.
 # It uses GAS (GNU Assembly) syntax
 
-# is already the default
-# . intel_syntax noprefix
-
+.intel_syntax noprefix
 .code64
 # entry point into Rust
-.EXTERN entry_rust
+.EXTERN entry_64_bit
 
 # start symbol must be globally available (linker must find it, don't discard it)
 .GLOBAL start
@@ -23,40 +21,34 @@
         #   ebx: pointer to Multiboot2 information structure
         #
         # first argument is edi, second is esi => SYSTEM V x86_64 calling convention
-        mov         rdi,    0
-        mov         rsi,    0
-        mov         edi,    eax
-        mov         esi,    ebx
+        mov     rdi, 0
+        mov     rsi, 0
+        mov     edi, eax
+        mov     esi, ebx
 
         # Set stack top (stack grows downwards, from high to low address).
         # GRUB already used the stack provided by the UEFI firmware and
         # Multiboot2 spec also says, application needs to set it's own stack.
-
+        mov     rsp, 0
+        mov     rbp, 0
         # OFFSET in intel syntax is similar to $ in AT&T syntax
         # This way we get the symbol address as immediate in assembly output
         # https://stackoverflow.com/questions/39355188/
-
         # This is different to nasm, where the symbol address would be used
         # by default as immediate.
-        movabs      rax,    OFFSET _initial_stack_top
-        # _initial_stack_top is 16 byte aligned but exclusive -> get next lower aligned address
-        sub         rax,    16
-        # x86-thingy: the stack pointer minus eight must be correctly aligned
-        # -> this comes from how stack frames are created at function entry
-        # -> first argument is actually stored in `rsp - 8`
-        add         rax,    8
-        mov         rsp,    rax
-        mov         rbp,    rax
+        mov     esp, OFFSET _initial_stack_top
+        mov     ebp, OFFSET _initial_stack_top
 
-        jmp         entry_rust
-        ud2
+        jmp     entry_64_bit
+
+        # here we should only land if some error occurs
+        cli     # clear interrupts, otherwise the hlt will not work
+        hlt
 
 # -----------------------------------------------------------------
 .section .bss
 
-    # Reserve 128 KiB as stack (no stack overflow protection so far!).
-    # Note: _initial_stack_top is exclusive, so the most top valid address
-    # is `_initial_stack_top - 1`. Needs further decrement for correct alignment.
+    # reserve 128 KiB as stack (no stack overflow protection so far!)
     .ALIGN 16
     _initial_stack_bottom:
         # implicitly fills zeroes
