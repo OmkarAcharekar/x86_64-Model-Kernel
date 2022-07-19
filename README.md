@@ -15,10 +15,6 @@ is similar to several `C`-projects, where also Assembly-Source and High Level-So
 There is no way this can be achieved without any assembly at all, because some low-level, architecture-specific 
 preparation code is always required. At least one needs to configure the stack properly.
 
-The figure below gives you a comprehensive overview over the assembling of the final artefact, an `ELF64-x86_64`-file.
-
-![Rust Kernel Assembling Architecture Overview](./doc/figures/rust-kernel-assembling-architecture-overview.png "Rust Kernel Assembling Architecture Overview")
-
 ## How To Run
 
 When you test this project (`run_qemu.sh`), it will
