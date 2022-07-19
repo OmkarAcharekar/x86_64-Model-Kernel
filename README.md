@@ -59,26 +59,3 @@ With a boot-order of `firmware > GRUB > %my-binary%`, the binary could take the 
     - A: The final binary gets assembled from multiple object files. Code must be relocatable by the linker,
          otherwise (relative) jumps and loads may get damaged.
 
-## References
-- **GRUB bootloader** \
-  https://www.gnu.org/software/grub/
-- **Multiboot2 spec** \
-  https://www.gnu.org/software/grub/manual/multiboot2/
-- **ELF spec** \
-  https://refspecs.linuxfoundation.org/elf/elf.pdf
-- **Tianocore/edk2** \
-  https://github.com/tianocore/edk2
-- **UEFI spec (2.9)** \
-  https://uefi.org/sites/default/files/resources/UEFI_Spec_2_9_2021_03_18.pdf
-- **Intel® Platform Innovation for UEFI - CSM Specification** \
-  https://www.intel.com/content/dam/www/public/us/en/documents/reference-guides/efi-compatibility-support-module-specification-v098.pdf
-- **Intel® Software Developer Manuals Overview** \
-  https://software.intel.com/content/www/us/en/develop/articles/intel-sdm.html
-
-[0]: https://www.gnu.org/software/grub/
-[1]: https://www.gnu.org/software/grub/manual/multiboot2/
-[2]: https://refspecs.linuxfoundation.org/elf/elf.pdf
-[3]: https://github.com/tianocore/edk2
-[4]: https://uefi.org/sites/default/files/resources/UEFI_Spec_2_9_2021_03_18.pdf
-[5]: https://www.intel.com/content/dam/www/public/us/en/documents/reference-guides/efi-compatibility-support-module-specification-v098.pdf
-[6]: https://software.intel.com/content/www/us/en/develop/articles/intel-sdm.html
