@@ -1,6 +1,6 @@
 # Build Setup Modek to Compile a Kernel for `x86_64`
 
-A compatible  binary (kernel) which refers to a specification that defines the handoff from a bootloader to a payload. The `ELF64-x86_64`-file contains The binary g  that can be loaded  by a GRUB bootloader. It fetches data from `UEFI` firmware and `cpuid` and logs that information to the screen. The main goals were to figure out how such a setup will look like
+A compatible  binary (kernel) which refers to a specification that defines the handoff from a bootloader to a payload. The `ELF64-x86_64`-file contains the binary   that can be loaded  by a GRUB bootloader. It fetches data from `UEFI` firmware and `cpuid` and logs that information to the screen. The main goals were to figure out how such a setup will look like
 
 The demo project focuses on the **x86_64** processor architecture  and `UEFI` as firmware environment.
 
