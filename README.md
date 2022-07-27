@@ -81,21 +81,4 @@ this [blog post for more details](https://phip1611.de/blog/how-to-use-qemus-debu
 
 ---
 
-## Trivia/FAQ/Good to know/What I've learnt
-- Q: Are OPCODES between 32-bit and 64-bit code different?
-    - A: yes, I ran into this and learned it the hard way. If you execute 64-bit code in a 32-bit environment
-         or vice versa, strange things will happen.
-- `multiboot(2)` only specifies behavior for `x86` but not for other architectures, like ARM
-- Q: Why is the Rust binary a static library and not an executable?
-    - A: The final binary gets assembled from multiple object files. Code must be relocatable by the linker,
-         otherwise (relative) jumps and loads may get damaged.
-
-## Open Questions / TODO
-- [x] Heap inside application?!
-- [ ] How to ensure in Linker Script, that no code is mapped to address
-      where UEFI stuff is stored?
-  - [ ] make file relocatable \
-    currently hard to implement, because GRUB doesn't support relocatable ELF 
-    files. We didn't put much effort into this yet.
-- [ ] Debug and Prod build
 
