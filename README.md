@@ -5,8 +5,7 @@ A compatible  binary (kernel) which refers to a specification that defines the h
 The demo project focuses on the **x86_64** processor architecture  and `UEFI` as firmware environment.
 
 ![Rust Kernel QEMU Screenshot](./doc/figures/rust-kernel-qemu-screenshot.png "Rust Kernel QEMU Screenshot")
-*Screenshot from our kernel running in QEMU. It can fetch some information about it's environment
-and print it to the screen. If you boot it on your private computer, it would look similar.*
+
 
 
 ## Build Process of the Kernel
